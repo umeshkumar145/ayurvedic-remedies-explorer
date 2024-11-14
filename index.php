@@ -5,12 +5,12 @@
     <title>Home</title>
     <?php include('headtags.php'); ?>
 
-    <!-- Consolidated Modal Script -->
+    <!-- Modal Script -->
     <script>
         $(document).ready(function() {
             $(".btnEdit").click(function() {
-                var modalId = $(this).data('modal'); // Get modal ID from data attribute
-                $("#" + modalId).modal('show'); // Show the respective modal
+                var modalId = $(this).data('modal');
+                $("#" + modalId).modal('show');
             });
         });
     </script>
@@ -20,8 +20,9 @@
 
     <?php include('log_reg_modal.php'); ?>
 
-    <!-- Msg Modal -->
+    <!-- Message Modals -->
     <div class="bs-example">
+        <!-- Registration Success Modal -->
         <div id="msg_modal" class="modal fade" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -35,10 +36,8 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Msg Modal (User Already Registered) -->
-    <div class="bs-example">
+        <!-- User Already Registered Modal -->
         <div id="msg_modal_reg" class="modal fade" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -52,10 +51,8 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Msg2 Modal (Wrong Username/Password) -->
-    <div class="bs-example">
+        <!-- Wrong Username/Password Modal -->
         <div id="msg2_modal" class="modal fade" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -93,7 +90,7 @@
                             <h5 class="display-6 text-white animated slideInLeft">The Science of Life</h5>
                         </div>
                         <div class="col-lg-5 text-center text-lg-end overflow-hidden">
-                            <img class="img-fluid" src="img/spinner.png" width="500px" height="500px" alt="">
+                            <img class="img-fluid" src="img/spinner.png" width="500" height="500" alt="">
                         </div>
                     </div>
                 </div>
@@ -193,5 +190,4 @@
     <?php include('footer.php'); ?>
 
 </body>
-
 </html>
