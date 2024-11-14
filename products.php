@@ -1,51 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>products</title>
+    <title>Products</title>
     <?php
         include('headtags.php');
     ?>
     <script>
         $(document).ready(function(){
-        $(".btnEdit").click(function(){
-        $("#msg_modal").modal('show');
+            $(".btnEdit").click(function(){
+                $("#msg_modal").modal('show');
+            });
         });
-    });
     </script>
 </head>
 <body style="margin-top:-20px">
-    <!--SEARCH PHP -->
+    <!-- SEARCH PHP -->
     <?php
         include('log_reg_modal.php');
         include("connection.php");
-        if(isset($_POST['search']))
-        {
 
-            $kw=$_POST['kw'];
-            $sql="select product_id,product_image,product_name,diseases_name,product_description,product_composition from product where product_name like '%".$kw."%' or diseases_name like '%".$kw."%' or product_description like '%".$kw."%'";
-        }
-        else
-        {
-            if(isset($_GET['view']))
-            {
-                $sql="select product_id,product_image,product_name,diseases_name,product_description,product_composition from product";
+        if (isset($_GET['search'])) {
+            $kw = $_GET['kw'];
+            $stmt = $con->prepare("SELECT product_id, product_image, product_name, diseases_name, product_description, product_composition FROM product WHERE product_name LIKE ? OR diseases_name LIKE ? OR product_description LIKE ?");
+            $searchTerm = "%" . $kw . "%";
+            $stmt->bind_param("sss", $searchTerm, $searchTerm, $searchTerm);
+            $stmt->execute();
+            $res = $stmt->get_result();
+        } else {
+            if (isset($_GET['view']) && $_GET['view'] == 'all') {
+                $sql = "SELECT product_id, product_image, product_name, diseases_name, product_description, product_composition FROM product";
+                $res = mysqli_query($con, $sql);
+            } else {
+                $sql = "SELECT product_id, product_image, product_name, diseases_name, product_description, product_composition FROM product LIMIT 8";
+                $res = mysqli_query($con, $sql);
             }
-            else
-            {
-                $sql="select product_id,product_image,product_name,diseases_name,product_description,product_composition from product limit 8";
-            }
         }
-        $res=mysqli_query($con,$sql);
     ?>
     <div class="container-xxl bg-white p-0">
 
-    <!--Msg MODAL -->
-        <style>
-            .bs-example{
-                margin: 20px;
-            }
-        </style>
-    
+        <!-- Modal Structure -->
         <div class="bs-example">
             <div id="msg_modal" class="modal fade" tabindex="-1">
                 <div class="modal-dialog">
@@ -61,31 +54,10 @@
                 </div>
             </div>
         </div>
-        <!---MSG End-->
-
-        <!---MSG -->
-        <div class="bs-example">
-            <div id="msg_modal_reg" class="modal fade" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">This Page Says...</h5>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        </div>
-                        <div class="modal-body">
-                            <p style="color:red;">This User Already Registered!</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!---MSG End-->
 
         <!-- Navbar & Hero Start -->
         <div class="container-xxl position-relative p-0">
-            <?php
-             include('navbar.php');
-            ?>
+            <?php include('navbar.php'); ?>
 
             <div class="container-xxl py-5 bg-dark hero-header mb-5">
                 <div class="container text-center my-5 pt-5 pb-4">
@@ -102,7 +74,6 @@
         </div>
         <!-- Navbar & Hero End -->
 
-
         <!-- Service Start -->
         <div class="container-xxl py-5">
             <div class="container">
@@ -111,49 +82,42 @@
                     <h1 class="mb-5">Explore Our Products</h1>
                 </div>
                 
-                <!-- SEARCH BOX -->
-                <form method="POST">
+                <!-- SEARCH FORM -->
+                <form method="GET">
                     <div class="input-group">
-                      <input type="text" name="kw" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
-                      <button type="submit" class="btn btn-outline-primary" name="search">search</button>
+                        <input type="text" name="kw" class="form-control rounded" placeholder="Search" value="<?php echo isset($_GET['kw']) ? $_GET['kw'] : ''; ?>" />
+                        <button type="submit" class="btn btn-outline-primary" name="search">Search</button>
                     </div>
                 </form>
-                     <br>
+                <br>
+
                 <div class="row g-4">
-                    <?php
-                        while( $row=mysqli_fetch_assoc($res))
-                        {
-                                 
-                        ?>
-                  <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
-                        <div class="service-item rounded pt-3">
-                            <a href="product_detail.php?id=<?php echo $row['product_id'];?>">  
-                            <div class="p-3">
-                              <center>  <img src="img/<?php echo $row['product_image'];?>" style="border-radius: 10px; ;" width="125px" height=100px class=" text-primary mb-4"></i></center>
-                                <h5 align="center"><?php echo $row['product_name'];?></h5>
-                                <p align="center"><?php echo $row['diseases_name'];?></p>
+                    <?php while ($row = mysqli_fetch_assoc($res)) { ?>
+                        <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                            <div class="service-item rounded pt-3">
+                                <a href="product_detail.php?id=<?php echo $row['product_id']; ?>">  
+                                    <div class="p-3">
+                                        <center>
+                                            <img src="img/<?php echo $row['product_image']; ?>" style="border-radius: 10px;" width="125px" height="100px" class="text-primary mb-4">
+                                        </center>
+                                        <h5 align="center"><?php echo $row['product_name']; ?></h5>
+                                        <p align="center"><?php echo $row['diseases_name']; ?></p>
+                                    </div>
+                                </a>
                             </div>
-                            </a>
                         </div>
-                    </div>
-                    <?php
-                    }
-            
-                if(!isset($_GET['view']))
-                {
-                ?>
-                <a href="products.php?view=all" style="width: 150px; height: 40px; margin-left: 970px;"  class="btn btn-primary py-2 px-4">View More</a>
-                <?php
-                 }
-                 ?>
+                    <?php } ?>
+
+                    <!-- View More Button -->
+                    <?php if (!isset($_GET['view'])) { ?>
+                        <a href="products.php?view=all" style="width: 150px; height: 40px; margin-left: 970px;" class="btn btn-primary py-2 px-4">View More</a>
+                    <?php } ?>
                 </div>
             </div>
         </div>
         <!-- Service End -->
-        
-        <?php
-            include('footer.php')
-        ?>
-</body>
 
+        <?php include('footer.php') ?>
+    </div>
+</body>
 </html>
