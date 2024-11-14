@@ -7,12 +7,14 @@ if (isset($_POST['submit_login'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Prepare SQL statement to prevent SQL injection
-    $stmt = $con->prepare("SELECT * FROM register WHERE username = $1");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    $row = $res->fetch_assoc();
+    // Prepare the query using pg_prepare
+    $stmt = pg_prepare($con, "login_query", "SELECT * FROM register WHERE username = $1");
+
+    // Execute the query with pg_execute
+    $result = pg_execute($con, "login_query", array($username));
+
+    // Check if the query returned any results
+    $row = pg_fetch_assoc($result);
 
     // Check if the username exists and verify the password
     if ($row && password_verify($password, $row['password'])) {
@@ -28,10 +30,6 @@ if (isset($_POST['submit_login'])) {
                 });
               </script>";
     }
-
-    // Close the statement and connection
-    $stmt->close();
-    mysqli_close($con);
 }
 // LOGIN PHP End
 
@@ -51,10 +49,11 @@ if (isset($_POST['submit_register'])) {
         // Hash the password before storing it
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        // Prepare SQL statement to prevent SQL injection
-        $stmt = $con->prepare("INSERT INTO register (name, username, password) VALUES ($1, $2, $3)");
-        $stmt->bind_param("sss", $name, $username, $hashedPassword);
-        $res = $stmt->execute();
+        // Prepare the query using pg_prepare
+        $stmt = pg_prepare($con, "register_query", "INSERT INTO register (name, username, password) VALUES ($1, $2, $3)");
+
+        // Execute the query with pg_execute
+        $res = pg_execute($con, "register_query", array($name, $username, $hashedPassword));
 
         if ($res) {
             echo "<script>
@@ -69,9 +68,6 @@ if (isset($_POST['submit_register'])) {
             echo "Registration Failed";
         }
 
-        // Close the statement and connection
-        $stmt->close();
-        mysqli_close($con);
     } catch (Exception $e) {
         echo "<script>
                 $(document).ready(function(){
@@ -85,7 +81,6 @@ if (isset($_POST['submit_register'])) {
 }
 // REGISTRATION PHP End
 ?>
-
 
 <!-- LOGIN Form Start -->
 <div class="modal fade" id="log_modal">
