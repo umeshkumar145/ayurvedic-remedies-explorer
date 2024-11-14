@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: php-web-app
+    env: php
+    buildCommand: |
+      apt-get update && apt-get install -y php
+      composer install  # if you use Composer to manage PHP dependencies
+    startCommand: php -S 0.0.0.0:10000 -t public  # Adjust if needed
+    autoDeploy: true
