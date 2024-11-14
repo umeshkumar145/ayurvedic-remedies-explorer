@@ -1,21 +1,3 @@
-  <script type="text/javascript">
-      function comparepass() {
-          pass=document.getElementById("pass").value;
-          cpass=document.getElementById("cpass").value;
-          btn=document.getElementById("regbtn")
-          sp=document.getElementById("msg");
-          if(pass!==cpass)
-          {
-                
-              sp.innerHTML="<h6>Password & Confirm Password must be same.</h6>"
-              btn.disabled=true
-          }
-          else{
-              sp.innerHTML=""
-              btn.disabled=false;
-          }
-      }
-  </script>
 
   <!-- LOGIN modal PHP Start-->
     <?php
@@ -330,3 +312,22 @@
         </div>
     </div>
     <!-- REGISTER Form END -->
+
+    <script type="text/javascript">
+      function comparepass() {
+          pass=document.getElementById("pass").value;
+          cpass=document.getElementById("cpass").value;
+          btn=document.getElementById("regbtn")
+          sp=document.getElementById("msg");
+          if(pass!==cpass)
+          {
+                
+              sp.innerHTML="<h6>Password & Confirm Password must be same.</h6>"
+              btn.disabled=true
+          }
+          else{
+              sp.innerHTML=""
+              btn.disabled=false;
+          }
+      }
+  </script>
