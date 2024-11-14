@@ -24,7 +24,7 @@
 <body style="margin-top:-20px">
     <!--SEARCH PHP -->
             <?php
-                session_start();
+                //session_start();
                 include("connection.php");
                 if(isset($_POST['search']))
                 {
