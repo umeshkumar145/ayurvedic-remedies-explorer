@@ -2,9 +2,7 @@
 <html lang="en">
 <head>
     <title>Products</title>
-    <?php
-        include('headtags.php');
-    ?>
+    <?php include('headtags.php'); ?>
     <script>
         $(document).ready(function(){
             $(".btnEdit").click(function(){
@@ -14,6 +12,7 @@
     </script>
 </head>
 <body style="margin-top:-20px">
+
     <!-- SEARCH PHP -->
     <?php
         include('log_reg_modal.php');
@@ -21,21 +20,20 @@
 
         if (isset($_GET['search'])) {
             $kw = $_GET['kw'];
-            $stmt = $con->prepare("SELECT product_id, product_image, product_name, diseases_name, product_description, product_composition FROM product WHERE product_name LIKE ? OR diseases_name LIKE ? OR product_description LIKE ?");
             $searchTerm = "%" . $kw . "%";
-            $stmt->bind_param("sss", $searchTerm, $searchTerm, $searchTerm);
-            $stmt->execute();
-            $res = $stmt->get_result();
+            $stmt = pg_prepare($con, "search_query", "SELECT product_id, product_image, product_name, diseases_name, product_description, product_composition FROM product WHERE product_name ILIKE $1 OR diseases_name ILIKE $1 OR product_description ILIKE $1");
+            $res = pg_execute($con, "search_query", array($searchTerm));
         } else {
             if (isset($_GET['view']) && $_GET['view'] == 'all') {
                 $sql = "SELECT product_id, product_image, product_name, diseases_name, product_description, product_composition FROM product";
-                $res = mysqli_query($con, $sql);
+                $res = pg_query($con, $sql);
             } else {
                 $sql = "SELECT product_id, product_image, product_name, diseases_name, product_description, product_composition FROM product LIMIT 8";
-                $res = mysqli_query($con, $sql);
+                $res = pg_query($con, $sql);
             }
         }
     ?>
+    
     <div class="container-xxl bg-white p-0">
 
         <!-- Modal Structure -->
@@ -58,7 +56,6 @@
         <!-- Navbar & Hero Start -->
         <div class="container-xxl position-relative p-0">
             <?php include('navbar.php'); ?>
-
             <div class="container-xxl py-5 bg-dark hero-header mb-5">
                 <div class="container text-center my-5 pt-5 pb-4">
                     <h1 class="display-3 text-white mb-3 animated slideInDown">Products</h1>
@@ -85,23 +82,23 @@
                 <!-- SEARCH FORM -->
                 <form method="GET">
                     <div class="input-group">
-                        <input type="text" name="kw" class="form-control rounded" placeholder="Search" value="<?php echo isset($_GET['kw']) ? $_GET['kw'] : ''; ?>" />
+                        <input type="text" name="kw" class="form-control rounded" placeholder="Search" value="<?php echo isset($_GET['kw']) ? htmlspecialchars($_GET['kw']) : ''; ?>" />
                         <button type="submit" class="btn btn-outline-primary" name="search">Search</button>
                     </div>
                 </form>
                 <br>
 
                 <div class="row g-4">
-                    <?php while ($row = mysqli_fetch_assoc($res)) { ?>
+                    <?php while ($row = pg_fetch_assoc($res)) { ?>
                         <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
                             <div class="service-item rounded pt-3">
                                 <a href="product_detail.php?id=<?php echo $row['product_id']; ?>">  
                                     <div class="p-3">
                                         <center>
-                                            <img src="img/<?php echo $row['product_image']; ?>" style="border-radius: 10px;" width="125px" height="100px" class="text-primary mb-4">
+                                            <img src="img/<?php echo htmlspecialchars($row['product_image']); ?>" style="border-radius: 10px;" width="125px" height="100px" class="text-primary mb-4">
                                         </center>
-                                        <h5 align="center"><?php echo $row['product_name']; ?></h5>
-                                        <p align="center"><?php echo $row['diseases_name']; ?></p>
+                                        <h5 align="center"><?php echo htmlspecialchars($row['product_name']); ?></h5>
+                                        <p align="center"><?php echo htmlspecialchars($row['diseases_name']); ?></p>
                                     </div>
                                 </a>
                             </div>
@@ -117,7 +114,7 @@
         </div>
         <!-- Service End -->
 
-        <?php include('footer.php') ?>
+        <?php include('footer.php'); ?>
     </div>
 </body>
 </html>
