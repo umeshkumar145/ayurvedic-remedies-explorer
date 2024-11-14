@@ -8,7 +8,7 @@ if (isset($_POST['submit_login'])) {
     $password = $_POST['password'];
 
     // Prepare SQL statement to prevent SQL injection
-    $stmt = $con->prepare("SELECT * FROM register WHERE username = ?");
+    $stmt = $con->prepare("SELECT * FROM register WHERE username = $1");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $res = $stmt->get_result();
@@ -52,7 +52,7 @@ if (isset($_POST['submit_register'])) {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         // Prepare SQL statement to prevent SQL injection
-        $stmt = $con->prepare("INSERT INTO register (name, username, password) VALUES (?, ?, ?)");
+        $stmt = $con->prepare("INSERT INTO register (name, username, password) VALUES ($1, $2, $3)");
         $stmt->bind_param("sss", $name, $username, $hashedPassword);
         $res = $stmt->execute();
 
