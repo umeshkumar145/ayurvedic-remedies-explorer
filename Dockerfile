@@ -18,3 +18,13 @@ EXPOSE 80
 
 # Start Apache in the foreground
 CMD ["apache2-foreground"]
+
+# Use an official PHP runtime as a parent image
+FROM php:8.0-apache
+
+# Install pgsql extension and any other dependencies
+RUN apt-get update && apt-get install -y php-pgsql
+
+# Copy application files
+COPY . /var/www/html
+
