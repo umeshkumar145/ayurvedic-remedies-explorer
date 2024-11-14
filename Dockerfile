@@ -1,8 +1,9 @@
 # Use an official PHP image with Apache
 FROM php:8.2-apache
 
-# Install required extensions for PHP (add any other needed extensions)
-RUN docker-php-ext-install mysqli pdo pdo_mysql
+# Install necessary system dependencies and PHP extensions
+RUN apt-get update && apt-get install -y libpq-dev \
+    && docker-php-ext-install mysqli pdo pdo_mysql pgsql pdo_pgsql
 
 # Enable Apache mod_rewrite (if your app uses URL rewriting)
 RUN a2enmod rewrite
